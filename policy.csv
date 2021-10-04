@@ -1,0 +1,3 @@
+p, admin, /*, *
+p, viewer, /zone/*, view
+p, editor, /zone/*, *
