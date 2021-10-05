@@ -55,12 +55,15 @@ func authorizeZoneRoute(c *fiber.Ctx, zoneId int, action string) error {
 	if err != nil {
 		return c.Status(401).SendString(fmt.Sprintf("<h1>Whoops!<h1><p>%s</p>", err.Error()))
 	}
+	/*
 	role, err := GetRoleById(u.Role)
 	if err != nil {
 		return c.Status(401).SendString(fmt.Sprintf("<h1>Whoops!<h1><p>%s</p>", err.Error()))
 	}
 
 	ok, err := casbinEnforcer.Enforce(role.Name, string(c.Request().URI().Path()), action)
+	*/
+	ok, err := casbinEnforcer.Enforce(u.Name, string(c.Request().URI().Path()), action)
 	if err != nil {
 		fmt.Printf("Err: %s\n", err)
 		return c.Status(404).SendString("<h1>Whoops!</h1><p>That zone was not found</p>")
