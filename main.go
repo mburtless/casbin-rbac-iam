@@ -15,6 +15,7 @@ func main() {
 	// setup casbin auth rules
 	var err error
 	casbinEnforcer, err = casbin.NewEnforcer("./auth_model.conf", "./policy.csv")
+	casbinEnforcer.EnableLog(true)
 	if err != nil {
 		log.Fatalf("Failed to initialize casbin: %s", err.Error())
 	}
