@@ -1,6 +1,7 @@
-p, admin, /*, *
-p, viewer, /zone/*, view
-p, editor, /zone/*, *
+p, admin, /*, *, allow
+p, viewer, /zone/*, view, allow
+p, editor, /zone/*, *, allow
+p, viewer, /zone/1, view, deny
 
 g, larry, admin
 g, bob, viewer
