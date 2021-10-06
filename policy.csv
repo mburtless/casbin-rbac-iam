@@ -1,7 +1,7 @@
-p, admin, /*, *, allow
-p, viewer, /zone/*, view, allow
-p, editor, /zone/*, *, allow
-p, viewer, /zone/1, view, deny
+p, admin, /*, *, allow, {}
+p, viewer, /zone/*, view, allow, "{""type"": ""matchSuffix"", ""value"": ""com""}"
+p, editor, /zone/*, *, allow, {}
+p, viewer, /zone/1, view, deny, {}
 
 g, larry, admin
 g, bob, viewer

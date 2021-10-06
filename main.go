@@ -16,6 +16,7 @@ func main() {
 	var err error
 	casbinEnforcer, err = casbin.NewEnforcer("./auth_model.conf", "./policy.csv")
 	casbinEnforcer.EnableLog(true)
+	casbinEnforcer.AddFunction("condition_match", ConditionMatchFunc)
 	if err != nil {
 		log.Fatalf("Failed to initialize casbin: %s", err.Error())
 	}
@@ -50,21 +51,17 @@ func setup() *fiber.App {
 }
 
 func authorizeZoneRoute(c *fiber.Ctx, zoneId int, action string) error {
-	// resolve role for user, casbin doesnt do this for us?
 	apiKey := c.Get("x-api-key", "")
 	u, err := GetCurrentUser(apiKey)
 	if err != nil {
 		return c.Status(401).SendString(fmt.Sprintf("<h1>Whoops!<h1><p>%s</p>", err.Error()))
 	}
-	/*
-	role, err := GetRoleById(u.Role)
-	if err != nil {
-		return c.Status(401).SendString(fmt.Sprintf("<h1>Whoops!<h1><p>%s</p>", err.Error()))
-	}
 
-	ok, err := casbinEnforcer.Enforce(role.Name, string(c.Request().URI().Path()), action)
-	*/
-	ok, err := casbinEnforcer.Enforce(u.Name, string(c.Request().URI().Path()), action)
+	z, err := GetZoneById(zoneId)
+	if err != nil {
+		return c.Status(404).SendString("<h1>Whoops!</h1><p>That zone was not found</p>")
+	}
+	ok, err := casbinEnforcer.Enforce(u.Name, string(c.Request().URI().Path()), action, z)
 	if err != nil {
 		fmt.Printf("Err: %s\n", err)
 		return c.Status(404).SendString("<h1>Whoops!</h1><p>That zone was not found</p>")
@@ -73,6 +70,5 @@ func authorizeZoneRoute(c *fiber.Ctx, zoneId int, action string) error {
 		return c.Status(403).SendString("<h1>Not Authorized</h1><p>User is unauthorized to view that zone</p>")
 	}
 
-	z, err := GetZoneById(zoneId)
 	return c.Status(200).SendString(fmt.Sprintf("<h1>A zone<h1><p>Welcome %s to zone %s</p>", u.Name, z.Name))
 }

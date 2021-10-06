@@ -72,3 +72,9 @@ func GetZoneById(id int) (*Zone, error) {
 	}
 	return nil, fmt.Errorf("zone with ID %d not found", id)
 }
+
+// Condition modifier for policies
+type Condition struct {
+	Type string `json:"type"`
+	Value interface{} `json:"value"`
+}
